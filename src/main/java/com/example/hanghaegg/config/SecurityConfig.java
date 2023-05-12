@@ -46,6 +46,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 				.requestMatchers("/user/**").permitAll()
+				.requestMatchers("/summonerByName/**").permitAll()
 				// .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
