@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public class MemberRequest {
 
-	private String username;
+	private String userName;
 	private String password;
 }

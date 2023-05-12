@@ -20,4 +20,13 @@ public class Member {
 
 	private String userName;
 	private String password;
+
+	private Member(String userName, String password) {
+		this.userName = userName;
+		this.password = password;
+	}
+
+	public static Member of(String userName, String password) {
+		return new Member(userName, password);
+	}
 }
