@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: common
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: false
+        hbm2ddl:
+          auto: update
+    open-in-view: false

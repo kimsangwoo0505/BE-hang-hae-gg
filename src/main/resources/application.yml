@@ -1,21 +1,7 @@
 spring:
-  h2:
-    console:
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:db;MODE=MYSQL
-    username: sa
-    password:
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: false
-        hbm2ddl:
-          auto: update
-    open-in-view: false
-
-jwt:
-  secret:
-    key: 7IS47KSA7ZW07KeE7KeA7Zi47ZWY64KY7IOB7Jqw7J2A7ISc66qo65GQ7ISx6rO17ZWY6ri467CU656N64uI64uk
+  profiles:
+    group:
+      local:
+        - common
+        - oauth
+        - jwt
