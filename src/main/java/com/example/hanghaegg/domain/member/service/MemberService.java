@@ -4,59 +4,39 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.hanghaegg.domain.member.dto.MemberDto;
+import com.example.hanghaegg.domain.member.constant.MemberRole;
+import com.example.hanghaegg.domain.member.dto.MemberSignUpDto;
 import com.example.hanghaegg.domain.member.entity.Member;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
-import com.example.hanghaegg.security.jwt.JwtUtil;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final JwtUtil jwtUtil;
 	private final PasswordEncoder passwordEncoder;
 
-	@Transactional
-	public void signup(final MemberDto memberDto) {
+	public void signUp(MemberSignUpDto memberSignUpDto) throws Exception {
 
-		// throwIfExistOwner(memberRequest.getUsername(), memberRequest.getEmail());
-		String password = passwordEncoder.encode(memberDto.getPassword());
-		memberDto.updatePassword(password);
+		if (memberRepository.findByEmail(memberSignUpDto.getEmail()).isPresent()) {
+			throw new Exception("이미 존재하는 이메일입니다.");
+		}
 
-		Member member = MemberDto.toEntity(memberDto);
+		if (memberRepository.findByNickname(memberSignUpDto.getNickname()).isPresent()) {
+			throw new Exception("이미 존재하는 닉네임입니다.");
+		}
+
+		Member member = Member.builder()
+			.email(memberSignUpDto.getEmail())
+			.password(memberSignUpDto.getPassword())
+			.nickname(memberSignUpDto.getNickname())
+			.role(MemberRole.USER)
+			.build();
+
+		member.passwordEncode(passwordEncoder);
 		memberRepository.save(member);
 	}
-
-	@Transactional
-	public void login(final MemberDto memberDto, final HttpServletResponse response) {
-
-		String userName = memberDto.getUserName();
-		String password = memberDto.getPassword();
-
-		Member member = memberRepository.findByUserName(userName).orElseThrow(
-			() -> new IllegalArgumentException("존재하지 않는 유저입니다")
-		);
-		// Member searchedMember = memberRepository.findByUsername(username).orElseThrow(
-		// 	() -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND)
-		// );
-		//
-		// if(!passwordEncoder.matches(password, searchedMember.getPassword())){
-		// 	throw new RestApiException(MemberErrorCode.INVALID_PASSWORD);
-		// }
-
-		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getUserName()));
-	}
-
-	// private void throwIfExistOwner(String loginUsername) {
-	//
-	// 	Optional<Member> searchedMember = memberRepository.findByUsername(loginUsername);
-	//
-	// 	if (searchedMember.isPresent()) {
-	// 		throw new RestApiException(MemberErrorCode.DUPLICATED_MEMBER);
-	// 	}
-	// }
 }
