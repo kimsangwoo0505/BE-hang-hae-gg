@@ -5,3 +5,7 @@ spring:
         - common
         - oauth
         - jwt
+      dev:
+        - common
+        - oauth
+        - jwt
