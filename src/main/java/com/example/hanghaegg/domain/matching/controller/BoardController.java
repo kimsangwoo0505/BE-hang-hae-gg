@@ -1,5 +1,6 @@
 package com.example.hanghaegg.domain.matching.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -21,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("matching")
+@RequestMapping("matches")
 public class BoardController {
 
 	private final BoardService boardService;
 
 	@PostMapping
-	public ResponseEntity<BoardResponse> createBoard(@RequestBody BoardRequest boardRequest){
+	public ResponseEntity<BoardResponse> createBoard(@RequestBody BoardRequest boardRequest) throws IOException {
 
 		boardService.createBoard(boardRequest);
 
