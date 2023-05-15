@@ -70,7 +70,7 @@ public class SecurityConfig {
 			.requestMatchers("/swagger-ui/**").permitAll()
 			.requestMatchers("/v3/api-docs/**").permitAll()
 			.requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
-			.requestMatchers("/signup").permitAll() // 회원가입 접근 가능
+			.requestMatchers("/signup", "/").permitAll() // 회원가입 접근 가능
 			.anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
 			.and()
 			//== 소셜 로그인 설정 ==//
