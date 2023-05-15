@@ -12,6 +12,7 @@ public class MatchResponseDto {
 	private String gametype;
 	private boolean winresult;
 	private String championName;
+	private String championImg;
 	private int kills;
 	private int	deaths;
 	private	int assists;

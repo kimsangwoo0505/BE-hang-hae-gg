@@ -160,9 +160,9 @@ public class SummonerService {
 				}
 
 
+				String champonImg="https://ddragon.leagueoflegends.com/cdn/13.9.1/img/champion/"+championName+".png";
 
-
-				MatchResponseDto matchResponseDto0=new MatchResponseDto("랭크게임",didSummonerWin,championName,kills,deaths,assists);
+				MatchResponseDto matchResponseDto0=new MatchResponseDto("랭크게임",didSummonerWin,championName,champonImg,kills,deaths,assists);
 				matchresult.add(matchResponseDto0);
 				// i++;
 
@@ -176,7 +176,6 @@ public class SummonerService {
 
 
 		String summonerIcon="https://ddragon.leagueoflegends.com/cdn/13.9.1/img/profileicon/" + result.getProfileIconId() + ".png";
-
 
 
 		InfoResponseDto infoResponseDto =new InfoResponseDto(result3.getTier(),result3.getRank(),result3.getSummonerName(),result3.getLeaguePoints(),summonerIcon,result3.getWins(),result3.getLosses(),matchresult);
