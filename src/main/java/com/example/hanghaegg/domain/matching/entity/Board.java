@@ -1,10 +1,18 @@
 package com.example.hanghaegg.domain.matching.entity;
 
+import java.util.Optional;
+
+import com.example.hanghaegg.domain.matching.dto.BoardRequest;
+import com.example.hanghaegg.domain.member.entity.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,15 +32,22 @@ public class Board {
 	@Column(nullable = false)
 	private String content;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "memberId")
+	private Member member;
+
 	private String img;
 
-	private Board(String title, String content, String img) {
-		this.title = title;
-		this.content = content;
+	public Board(BoardRequest boardRequest, Member member, String img) {
+		this.title = boardRequest.getTitle();
+		this.content = boardRequest.getContent();
+		this.member = member;
 		this.img = img;
 	}
 
-	public static Board of(String title, String content, String img) {
-		return new Board(title, content, img);
-	}
+	//TODO: private 생성자 추가
+
+	// public static Board of(String title, String content, String img) {
+	// 	return new Board(title, content, img);
+	// }
 }
