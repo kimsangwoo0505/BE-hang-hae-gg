@@ -36,13 +36,21 @@ public class Board {
 	@JoinColumn(name = "memberId")
 	private Member member;
 
+	@Column
+	private int fileAttached;
+
+	@Column
+	private String fileName;
+
 	private String img;
 
-	public Board(BoardRequest boardRequest, Member member, String img) {
+	public Board(BoardRequest boardRequest, Member member, int fileAttached, String img, String fileName) {
 		this.title = boardRequest.getTitle();
 		this.content = boardRequest.getContent();
 		this.member = member;
+		this.fileAttached = fileAttached;
 		this.img = img;
+		this.fileName = fileName;
 	}
 
 	//TODO: private 생성자 추가

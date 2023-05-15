@@ -40,25 +40,26 @@ public class BoardController {
 			.body(new BoardResponse("게시글을 작성하였습니다."));
 	}
 
-	// @GetMapping("/matches")
-	// public ResponseEntity<List<BoardDto>> getBoardList() {
-	//
-	// 	return ResponseEntity.status(HttpStatus.OK)
-	// 		.body(boardService.searchBoards());
-	// }
-	//
-	// @GetMapping("/matches/{board-id}")
-	// public ResponseEntity<BoardResponse> getBoard(@PathVariable(name = "board-id") final Long boardId) {
-	//
-	// 	return ResponseEntity.status(HttpStatus.OK)
-	// 		.body(boardService.searchBoard(boardId));
-	// }
+	@GetMapping("/matches")
+	public ResponseEntity<List<BoardDto>> getBoardList() {
+
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(boardService.getAllBoards());
+	}
+
+	@GetMapping("/matches/{board-id}")
+	public ResponseEntity<BoardDto> getBoard(@PathVariable(name = "board-id") final Long boardId) {
+
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(boardService.getBoard(boardId));
+	}
 
 	@DeleteMapping("/matches/{board-id}")
-	public ResponseEntity<Void> deleteArticle(
-		@PathVariable(name = "board-id") final Long boardId) {
+	public ResponseEntity<Void> deleteBoard(
+		@PathVariable(name = "board-id") final Long boardId,
+		@AuthenticationPrincipal User user) {
 
-		boardService.deleteBoard(boardId);
+		boardService.deleteBoard(boardId, user.getUsername());
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 }
