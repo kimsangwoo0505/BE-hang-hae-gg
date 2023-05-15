@@ -66,8 +66,8 @@ public class BoardService {
 		// boardRequest.setImg(imagePath);
 
 		String mail = user.getUsername();
-		Member member = memberRepository.findByMail(mail);
-		Board board = new Board(boardRequest, member, imagePath);
+		Optional<Member> member = memberRepository.findByEmail(mail);
+		Board board = new Board(boardRequest, member.get(), imagePath);
 		boardRepository.saveAndFlush(board);
 	}
 
