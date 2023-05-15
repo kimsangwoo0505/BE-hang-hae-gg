@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,12 +35,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(CommonErrorCode.INTERNAL_SERVER_ERROR);
 	}
 
-
+	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
-		final MethodArgumentNotValidException ex,
-		final HttpHeaders headers,
-		final HttpStatus status,
-		final WebRequest request) {
+		MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
 		final List<String> errorList = ex.getBindingResult()
 			.getAllErrors()
