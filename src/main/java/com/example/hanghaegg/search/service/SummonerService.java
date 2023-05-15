@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
-@PropertySource(ignoreResourceNotFound = false, value = "classpath:application.properties")
 public class SummonerService {
 
 	private ObjectMapper objectMapper = new ObjectMapper();

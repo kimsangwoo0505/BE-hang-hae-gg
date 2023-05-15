@@ -11,3 +11,7 @@ spring:
         hbm2ddl:
           auto: update
     open-in-view: false
+
+riot:
+  api:
+    key: RGAPI-e062a4d5-11cf-436f-934a-5bb3c46d158b
