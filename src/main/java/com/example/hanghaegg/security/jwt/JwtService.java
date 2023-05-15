@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -145,6 +146,7 @@ public class JwtService {
 	 */
 	public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
 		response.setHeader(accessHeader, accessToken);
+		response.addCookie(new Cookie(accessHeader, accessToken));
 	}
 
 	/**
@@ -152,6 +154,7 @@ public class JwtService {
 	 */
 	public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
 		response.setHeader(refreshHeader, refreshToken);
+		response.addCookie(new Cookie(refreshHeader, refreshToken));
 	}
 
 	/**
