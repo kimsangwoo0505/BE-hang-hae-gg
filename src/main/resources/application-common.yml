@@ -16,12 +16,3 @@ riot:
   api:
     key: RGAPI-6dad38cc-2a69-477f-a0ac-cd8d0c9f5cde
 
-cloud:
-  aws:
-    s3:
-      bucket: board-img
-    stack.auto: false
-    region.static: ap-northeast-2
-    credentials:
-      accessKey: AKIAQD4KXINBFEXKTMLP
-      secretKey: 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
