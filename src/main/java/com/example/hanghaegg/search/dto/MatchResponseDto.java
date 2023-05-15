@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MatchResponseDto {
 
+	private String gametype;
 	private boolean winresult;
 	private String championName;
 	private int kills;

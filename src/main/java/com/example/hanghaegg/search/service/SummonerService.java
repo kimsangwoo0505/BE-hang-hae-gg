@@ -8,6 +8,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,28 +34,26 @@ public class SummonerService {
 	@Value("${riot.api.key}")
 	private String mykey;
 
-	public FinalResponsDto callRiotAPISummonerByName(String summonerName) {
+	public FinalResponsDto callRiotAPISummonerByName(int page, int size,String summonerName) {
 		SummonerDTO result;
 		List<SummernerRealDto> result2;
 		List<String> matchIds;
 		List<MatchResponseDto> matchresult = new ArrayList<>();
 		boolean didSummonerWin = false;
 
+
 		String serverUrl = "https://kr.api.riotgames.com";
 		String matchUrl="https://asia.api.riotgames.com";
 		String encodedSummonerName;
-		////////////////////////////////////////////////////////////////////////소환사 id추출 완료
+
 		try {
 			encodedSummonerName = URLEncoder.encode(summonerName, StandardCharsets.UTF_8.toString());//띄어쓰기 코딩(HTTP 요청을 보낼때 소환사 이름을 URL에 안전하게 포함시키는 용도)
-			// String encodedSummonerName = URLEncoder.encode(summonerName, StandardCharsets.UTF_8.toString());//띄어쓰기 코딩
+
 			HttpClient client = HttpClient.newHttpClient();//새로운 HttpClient 객체를 생성(HTTP 요청을 보내고 응답을 받는데 사용)
 			HttpRequest request = HttpRequest.newBuilder()//HttpRequest는 요청 메서드(GET, POST, PUT, DELETE 등), URI, 헤더, 본문 등의 정보를 가지고 있으며,HttpClient의 send() 또는 sendAsync() 메서드에 전달하여 HTTP 요청을 보낼 수 있음
 				.uri(new URI(serverUrl + "/lol/summoner/v4/summoners/by-name/" + encodedSummonerName + "?api_key=" + mykey))
 				.build();//HttpRequest 객체를 생성하는 코드
-			//HttpRequest는 HTTP 요청을 나타내는 클래스로, 요청을 보낼 URI, HTTP 메소드 등을 설정할 수 있음(newBuilder() 메소드는 HttpRequest의 Builder 객체를 반환
-			//(newBuilder() 메소드는 HttpRequest의 Builder 객체를 반환,uri 메소드는 요청을 보낼 URI를 설정,build 메소드는 설정한 정보를 바탕으로 HttpRequest 객체를 생성)
-			//+Builder 객체는 일반적으로 객체 생성에 필요한 로직을 캡슐화하여, 객체 생성을 단순화하고 코드의 가독성을 높이며 메소드를 통해 값을 설정하고, 마지막에 build() 메소드를 호출하여
-			//최종적인 객체를 생성
+
 
 			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 			//request를 보내고 HttpResponse.BodyHandlers.ofString()로 BodyHandler를 생성(.ofString()으로 응답 본문(body)을 문자열(String)로 변환하여 처리)
@@ -70,11 +70,6 @@ public class SummonerService {
 			// e.printStackTrace();
 			// return null;
 		}
-		//IOException:파일 읽기/쓰기, 네트워크 통신 등 컴퓨터의 입출력 작업오류
-		//InterruptedException:쓰레드가 실행 중에 다른 쓰레드에 의해 중단되었을 때 발생하는 예외
-		//URISyntaxException: 잘못된 URI 구문을 사용했을 때 발생하는 예외
-
-		////////////////////////////////////////////////////////////////////////////////////////////////소환사 기본적인 전적 추출 완료
 
 
 		try {
@@ -95,12 +90,12 @@ public class SummonerService {
 		}
 		SummernerRealDto result3= result2.get(0);
 
-		///////////////////////////////////////////////////////////////////////////////////////////////매치 아이디 추출
+
 
 		try {
 			HttpClient client3 = HttpClient.newHttpClient();
 			HttpRequest request3 = HttpRequest.newBuilder()
-				.uri(new URI(matchUrl + "/lol/match/v5/matches/by-puuid/" + result.getPuuid() +"/ids?type=ranked&start=0&count=10&api_key=" + mykey))
+				.uri(new URI(matchUrl + "/lol/match/v5/matches/by-puuid/" + result.getPuuid() +"/ids?type=ranked&start=0&count=40&api_key=" + mykey))
 				.build();
 			HttpResponse<String> response3 = client3.send(request3, HttpResponse.BodyHandlers.ofString());
 
@@ -112,9 +107,14 @@ public class SummonerService {
 			// e.printStackTrace();
 			// return null;
 		}
-		//////////////////////////////////////////////매치 아이디로 최근 매치 조회
 
-		for (String matchId : matchIds) {
+
+		int start = Math.max(0, (page - 1) * size);
+		int end = Math.min(matchIds.size(), start + size);
+		List<String> paginatedMatchIds = matchIds.subList(start, end);
+
+
+		for (String matchId : paginatedMatchIds) {
 			try {
 				// String encodedSummonerName = URLEncoder.encode(summonerName, StandardCharsets.UTF_8.toString());//띄어쓰기 코딩
 				HttpClient client4 = HttpClient.newHttpClient();
@@ -125,7 +125,7 @@ public class SummonerService {
 				JsonNode matchDetail = objectMapper.readTree(response4.body());
 
 
-				// 경기의 참가자 목록을 조회// JSON 배열에서는 인덱스를 통해 접근할 수 있지만, 특정 key나 이름으로 직접 접근하는 것은 불가능해서 for문돌려야함
+
 				JsonNode participants = matchDetail.get("info").get("participants");
 
 				int teamId = 0;//검색한 소환사의 팀 ID를 저장할 변수를 선언
@@ -160,7 +160,9 @@ public class SummonerService {
 				}
 
 
-				MatchResponseDto matchResponseDto0=new MatchResponseDto(didSummonerWin,championName,kills,deaths,assists);
+
+
+				MatchResponseDto matchResponseDto0=new MatchResponseDto("랭크게임",didSummonerWin,championName,kills,deaths,assists);
 				matchresult.add(matchResponseDto0);
 				// i++;
 
@@ -171,12 +173,15 @@ public class SummonerService {
 		}
 
 
-		///////////////////////////
 
 
-		InfoResponseDto infoResponseDto =new InfoResponseDto(result3.getTier(),result3.getRank(),result3.getSummonerName(),result3.getLeaguePoints(),result3.getWins(),result3.getLosses(),matchresult);
+		String summonerIcon="https://ddragon.leagueoflegends.com/cdn/13.9.1/img/profileicon/" + result.getProfileIconId() + ".png";
 
-		// FinalResponsDto.setSuccess("검색완료",new result3);
+
+
+		InfoResponseDto infoResponseDto =new InfoResponseDto(result3.getTier(),result3.getRank(),result3.getSummonerName(),result3.getLeaguePoints(),summonerIcon,result3.getWins(),result3.getLosses(),matchresult);
+
+
 
 
 		return FinalResponsDto.setSuccess("검색완료",infoResponseDto);

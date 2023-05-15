@@ -18,13 +18,11 @@ public class SummonerController {
 
 	@GetMapping(value = "/summonerByName")
 	@ResponseBody
-	public FinalResponsDto callSummonerByName(@RequestParam String summonerName){
+	public FinalResponsDto callSummonerByName(
+		@RequestParam("page") int page,
+		@RequestParam("size") int size,
+		@RequestParam String summonerName){
 
-		// summonerName = summonerName.replaceAll(" ","%20");//URL에서는 공백 문자를 직접 사용할 수 없으므로, 대신에 %20이라는 URL 인코딩된 형태를 사용
-		//summonerName 문자열에서 모든 공백 문자를 URL 인코딩된 형태인 %20으로 교체함
-
-		// SummonerDTO apiResult = summonerService.callRiotAPISummonerByName(summonerName);
-
-		return summonerService.callRiotAPISummonerByName(summonerName);
+		return summonerService.callRiotAPISummonerByName(page,size,summonerName);
 	}
 }
