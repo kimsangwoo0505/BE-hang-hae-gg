@@ -1,19 +1,10 @@
 package com.example.hanghaegg.domain.matching.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.hanghaegg.domain.matching.dto.BoardRequest;
-
-import jakarta.annotation.Nullable;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,25 +24,15 @@ public class Board {
 	@Column(nullable = false)
 	private String content;
 
-	@Column(nullable = false)
-	private int fileAttached; //1 or 0
+	private String img;
 
-	@OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<BoardFile> boardFiles = new ArrayList<>();
-
-	public Board(BoardRequest boardRequest){
-		this.title = boardRequest.getTitle();
-		this.content = boardRequest.getContent();
-		this.fileAttached = 0;
+	private Board(String title, String content, String img) {
+		this.title = title;
+		this.content = content;
+		this.img = img;
 	}
 
-	public Board(BoardRequest boardRequest, int fileAttached){
-		this.title = boardRequest.getTitle();
-		this.content = boardRequest.getContent();
-		this.fileAttached = fileAttached;
+	public static Board of(String title, String content, String img) {
+		return new Board(title, content, img);
 	}
-
-	// public void setFileAttached(int fileAttached) {
-	// 	this.fileAttached = fileAttached;
-	// }
 }
