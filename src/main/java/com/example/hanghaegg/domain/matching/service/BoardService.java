@@ -1,8 +1,10 @@
 package com.example.hanghaegg.domain.matching.service;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.hanghaegg.domain.matching.dto.BoardRequest;
 import com.example.hanghaegg.domain.matching.entity.Board;
 import com.example.hanghaegg.domain.matching.repository.BoardRepository;
+import com.example.hanghaegg.domain.member.entity.Member;
+import com.example.hanghaegg.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoardService {
 
+	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
 	private final AmazonS3Client amazonS3Client;
 	private String S3Bucket = "board-img";
@@ -54,13 +59,16 @@ public class BoardService {
 	// }
 
 	@Transactional
-	public void createBoard(final BoardRequest boardRequest, final MultipartFile file) {
+	public void createBoard(final BoardRequest boardRequest, final MultipartFile file, User user) {
 
 		String imagePath = saveImg(file);
-		// boardDto.setMember(member);
-		boardRequest.setImg(imagePath);
+		// boardDto.setMember(user);
+		// boardRequest.setImg(imagePath);
 
-		Board board = boardRepository.saveAndFlush(BoardRequest.toEntity(boardRequest));
+		String mail = user.getUsername();
+		Member member = memberRepository.findByMail(mail);
+		Board board = new Board(boardRequest, member, imagePath);
+		boardRepository.saveAndFlush(board);
 	}
 
 	// @Transactional

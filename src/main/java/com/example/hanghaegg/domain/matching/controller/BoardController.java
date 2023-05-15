@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +29,10 @@ public class BoardController {
 	@PostMapping("/matches")
 	public ResponseEntity<BoardResponse> createBoard(
 		@RequestPart(value = "data") final BoardRequest boardRequest,
-		@RequestPart(value = "img") final MultipartFile file) {
+		@RequestPart(value = "img") final MultipartFile file,
+		User user){
 
-		boardService.createBoard(boardRequest, file);
+		boardService.createBoard(boardRequest, file, user);
 
 		return ResponseEntity
 			.status(HttpStatus.OK)

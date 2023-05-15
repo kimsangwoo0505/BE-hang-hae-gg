@@ -13,14 +13,14 @@ public class BoardRequest {
 	private String title;
 	private String content;
 
-	private String img;
+	// private String img;
 
 
-	public static Board toEntity(BoardRequest request) {
-		return Board.of(
-			request.getTitle(),
-			request.getContent(),
-			request.getImg()
-		);
-	}
+	// public static Board toEntity(BoardRequest request) {
+	// 	return Board.of(
+	// 		request.getTitle(),
+	// 		request.getContent(),
+	// 		request.getImg()
+	// 	);
+	// }
 }
