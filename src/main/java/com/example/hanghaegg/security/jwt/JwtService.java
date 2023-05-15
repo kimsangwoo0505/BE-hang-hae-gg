@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -150,8 +151,10 @@ public class JwtService {
 		String bearerAccessToken = "Bearer " + accessToken;
 		response.setHeader(accessHeader, bearerAccessToken);
 		try {
-			response.addCookie(
-				new Cookie(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20")));
+			ResponseCookie cookie = ResponseCookie
+				.from(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20"))
+				.path("http://localhost:3000").sameSite("None").httpOnly(true).maxAge(3600000).secure(true).build();
+			response.addHeader("Set-Cookie", cookie.toString());
 		} catch (UnsupportedEncodingException e) {
 			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
 		}
