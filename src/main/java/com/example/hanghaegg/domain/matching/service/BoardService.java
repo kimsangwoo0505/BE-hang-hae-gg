@@ -1,6 +1,8 @@
 package com.example.hanghaegg.domain.matching.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,6 +15,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.hanghaegg.domain.matching.dto.BoardDto;
 import com.example.hanghaegg.domain.matching.dto.BoardRequest;
 import com.example.hanghaegg.domain.matching.entity.Board;
 import com.example.hanghaegg.domain.matching.repository.BoardRepository;
@@ -30,23 +33,33 @@ public class BoardService {
 	private final AmazonS3Client amazonS3Client;
 	private String S3Bucket = "board-img";
 
-	// @Transactional(readOnly = true)
-	// public List<BoardDto> searchBoards() {
+	@Transactional(readOnly = true)
+	public List<BoardDto> getAllBoards() {
+
+		List<Board> boards = boardRepository.findAll();
+		List<BoardDto> boardDtos = new ArrayList<>();
+
+		// String imgPath;
+		for(Board board : boards){
+			boardDtos.add(new BoardDto(board));
+		}
+
+		return boardDtos;
+
+		// return boardRepository.findAll()
+		// 	.stream()
+		// 	.map(BoardListResponse::from)
+		// 	.sorted(Comparator.comparing(BoardListResponse::getCreatedAt).reversed())
+		// 	.collect(Collectors.toList());
+	}
 	//
-	// 	return boardRepository.findAllJoinFetch()
-	// 		.stream()
-	// 		.map(BoardListResponse::from)
-	// 		.sorted(Comparator.comparing(BoardListResponse::getCreatedAt).reversed())
-	// 		.collect(Collectors.toList());
-	// }
-	//
-	// @Transactional(readOnly = true)
-	// public BoardResponse searchBoard(final Long boardId) {
-	//
-	// 	Board board = findBoardByIdOrElseThrow(boardId);
-	//
-	// 	return BoardResponse.from(board);
-	// }
+	@Transactional(readOnly = true)
+	public BoardDto getBoard(final Long boardId) {
+
+		Board board = findBoardByIdOrElseThrow(boardId);
+
+		return new BoardDto(board);
+	}
 	//
 	// @Transactional(readOnly = true)
 	// public List<BoardResponse> searchBoards(final String address) {
@@ -61,14 +74,22 @@ public class BoardService {
 	@Transactional
 	public void createBoard(final BoardRequest boardRequest, final MultipartFile file, User user) {
 
-		String imagePath = saveImg(file);
-		// boardDto.setMember(user);
-		// boardRequest.setImg(imagePath);
-
 		String mail = user.getUsername();
 		Optional<Member> member = memberRepository.findByEmail(mail);
-		Board board = new Board(boardRequest, member.get(), imagePath);
-		boardRepository.saveAndFlush(board);
+		String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+
+		if(file.isEmpty()){
+			Board board = new Board(boardRequest, member.get(), 0, null, null);
+			boardRepository.saveAndFlush(board);
+		}else{
+			String imagePath = saveImg(file);
+			// boardDto.setMember(user);
+			// boardRequest.setImg(imagePath);
+
+			Board board = new Board(boardRequest, member.get(), 1, imagePath, fileName);
+			boardRepository.saveAndFlush(board);
+		}
+
 	}
 
 	// @Transactional
@@ -89,12 +110,25 @@ public class BoardService {
 	// }
 
 	@Transactional
-	public void deleteBoard(final Long boardId) {
+	public void deleteBoard(final Long boardId, String email) {
 
+		Optional<Member> member = memberRepository.findByEmail(email);
 		Board board = findBoardByIdOrElseThrow(boardId);
 		// throwIfNotOwner(board, member.getUsername());
+
+		if(!member.get().equals(board.getMember())){
+			throw new IllegalArgumentException("다른 회원이 작성한 퀴즈입니다.");
+		}
+
 		deleteImg(board);
 		boardRepository.delete(board);
+
+		// if (board.getFileAttached() == 1) {
+		// 	amazonS3Client.deleteObject(S3Bucket, keyName);
+		// } else {
+		// 	result = "file not found";
+		// }
+
 	}
 
 	private String saveImg (final MultipartFile file) {
@@ -120,8 +154,8 @@ public class BoardService {
 
 	private void deleteImg(final Board board) {
 
-		String[] imgId = board.getImg().split("/");
-		amazonS3Client.deleteObject(S3Bucket, imgId[imgId.length - 1]);
+		// String[] imgId = board.getImg().split("/");
+		amazonS3Client.deleteObject(S3Bucket, board.getFileName());
 	}
 
 	private Board findBoardByIdOrElseThrow(final Long boardId) {
