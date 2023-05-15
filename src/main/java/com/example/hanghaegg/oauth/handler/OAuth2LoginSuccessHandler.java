@@ -50,7 +50,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 			// 	log.info("이메일에 해당하는 유저를 db에서 찾았습니다!" + findUser.getRole());
 			// } else {
 			loginSuccess(response, oAuth2User); // 로그인에 성공한 경우 access, refresh 토큰 생성
-			response.sendRedirect("/");
+			response.sendRedirect("http://localhost:3000");
 			// }
 		} catch (Exception e) {
 			throw e;
