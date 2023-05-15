@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -145,16 +147,28 @@ public class JwtService {
 	 * AccessToken 헤더 설정
 	 */
 	public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-		response.setHeader(accessHeader, accessToken);
-		response.addCookie(new Cookie(accessHeader, accessToken));
+		String bearerAccessToken = "Bearer " + accessToken;
+		response.setHeader(accessHeader, bearerAccessToken);
+		try {
+			response.addCookie(
+				new Cookie(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20")));
+		} catch (UnsupportedEncodingException e) {
+			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
+		}
 	}
 
 	/**
 	 * RefreshToken 헤더 설정
 	 */
 	public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-		response.setHeader(refreshHeader, refreshToken);
-		response.addCookie(new Cookie(refreshHeader, refreshToken));
+		String bearerRefreshToken = "Bearer " + refreshToken;
+		response.setHeader(refreshHeader, bearerRefreshToken);
+		try {
+			response.addCookie(
+				new Cookie(refreshHeader, URLEncoder.encode(bearerRefreshToken, "utf-8").replaceAll("\\+", "%20")));
+		} catch (UnsupportedEncodingException e) {
+			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
+		}
 	}
 
 	/**
