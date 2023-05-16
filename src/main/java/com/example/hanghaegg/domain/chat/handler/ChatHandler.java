@@ -14,7 +14,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.example.hanghaegg.domain.chat.controller.ChatController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -32,8 +31,6 @@ public class ChatHandler extends TextWebSocketHandler {
 
 	ObjectMapper json = new ObjectMapper();
 
-	ChatController chatController;
-
 	// message
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -43,7 +40,7 @@ public class ChatHandler extends TextWebSocketHandler {
 
 		// master status
 		String masterStatus = null;
-		if (userSession.containsKey(chatController.master)) {
+		if (userSession.containsKey("master")) {
 			masterStatus = "online";
 		} else {
 			masterStatus = "offline";
@@ -97,7 +94,7 @@ public class ChatHandler extends TextWebSocketHandler {
 		userSession.put(senderId, session);
 
 		// as master send message to all
-		if (senderId.equals(chatController.master)) {
+		if (senderId.equals("master")) {
 			TextMessage msg = new TextMessage(senderId + " 님이 접속했습니다.");
 			sendToAll(msg, senderId);
 
@@ -164,7 +161,7 @@ public class ChatHandler extends TextWebSocketHandler {
 
 		// master status
 		String masterStatus = null;
-		if (userSession.containsKey(chatController.master)) {
+		if (userSession.containsKey("master")) {
 			masterStatus = "online";
 		} else {
 			masterStatus = "offline";
@@ -184,7 +181,7 @@ public class ChatHandler extends TextWebSocketHandler {
 		dataMap.put("time", time);
 		dataMap.put("masterStatus", masterStatus);
 		dataMap.put("onlineList", onlineList);	// user online status
-		dataMap.put("newOne", chatController.master);
+		dataMap.put("newOne", "master");
 
 		String receiverId = (String) dataMap.get("receiverId");
 

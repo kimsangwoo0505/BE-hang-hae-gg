@@ -24,39 +24,22 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
-	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
-	// 아직 로그인 된 사용자 정보를 어떻게 가져와야 할지 모르는 상황 -> 건님
-	// board의 작성자가 누구인지 확인이 안되는 상황 -> 은서님
 
-	public String master = null; // 고민해봐야할 문제
-	public String guest = null; // 고민해봐야할 문제
-
-	@GetMapping("/{boardId}/{myId}")
-	public void getChat(HttpServletRequest request, @PathVariable Long myId, @PathVariable Long boardId) {
-		Member guestMember = memberRepository.findById(myId).orElseThrow(
-			() -> new IllegalArgumentException("존재하지 않는 멤버입니다.")
-		);
-		Long masterId = 2L;
-
+	@GetMapping("/{boardId}")
+	public void getChat(HttpServletRequest request, @PathVariable Long boardId, @AuthenticationPrincipal User user) {
 		Board board = boardRepository.findById(boardId).orElseThrow(
 			() -> new IllegalArgumentException("존재하지 않는 게시물입니다.")
 		);
-		Member masterMember = memberRepository.findById(masterId).orElseThrow(
-			() -> new IllegalArgumentException("존재하지 않는 멤버입니다.")
-		);
 
 		HttpSession session = request.getSession();
-		System.out.println("chat param id 값 출력 : "  + myId);
+		System.out.println("chat param id 값 출력 : "  + user);
 
-		if (myId.equals(guestMember.getId())) {
-			String name = guestMember.getNickname() + session.toString().substring(session.toString().indexOf("@"));
-			guest = name;
+		if (user.getUsername().equals(board.getMember().getNickname())) {
+			String name = "master";
 			session.setAttribute("sessionId", name);
-		} else if(myId.equals(board.getMember().getId())) {
-			//board의 작성자를 알게되면 board에서 작성자의 아이디를 넣으면 됨
-			String name = board.getMember().getNickname();
-			master = name;
+		} else {
+			String name = "guest" + session.toString().substring(session.toString().indexOf("@"));
 			session.setAttribute("sessionId", name);
 		}
 
