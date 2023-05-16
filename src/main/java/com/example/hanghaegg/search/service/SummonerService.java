@@ -69,11 +69,11 @@ public class SummonerService {
 
 
 		} catch (IOException e) {
-			throw new RestApiException(SearchErrorCode.IOException_ERROR);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		} catch (InterruptedException e) {
-			throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		} catch (URISyntaxException e) {
-			throw new RestApiException(SearchErrorCode.URISyntaxException);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 
 		try {
@@ -88,11 +88,11 @@ public class SummonerService {
 
 
 		}catch (IOException e) {
-			throw new RestApiException(SearchErrorCode.IOException_ERROR);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		} catch (InterruptedException e) {
-			throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		} catch (URISyntaxException e) {
-			throw new RestApiException(SearchErrorCode.URISyntaxException);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 		SummernerRealDto result3= result2.get(0);
 
@@ -109,11 +109,11 @@ public class SummonerService {
 			//////////////매치아이디 추출완료
 
 		}catch (IOException e) {
-			throw new RestApiException(SearchErrorCode.IOException_ERROR);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		} catch (InterruptedException e) {
-			throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		} catch (URISyntaxException e) {
-			throw new RestApiException(SearchErrorCode.URISyntaxException);
+			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 
 
@@ -176,11 +176,11 @@ public class SummonerService {
 
 
 			} catch (IOException e) {
-				throw new RestApiException(SearchErrorCode.IOException_ERROR);
+				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 			} catch (InterruptedException e) {
-				throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 			} catch (URISyntaxException e) {
-				throw new RestApiException(SearchErrorCode.URISyntaxException);
+				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 			}
 		}
 
