@@ -1,6 +1,7 @@
 package com.example.hanghaegg.domain.matching.dto;
 
 import com.example.hanghaegg.domain.matching.entity.Board;
+import com.example.hanghaegg.domain.member.entity.Member;
 
 import lombok.Getter;
 
@@ -19,12 +20,25 @@ public class BoardDto {
 
 	private String memberName;
 
-	public BoardDto(Board board){
-		this.boardId = board.getId();
-		this.title = board.getTitle();
-		this.content = board.getContent();
-		this.img = board.getImg();
-		this.memberId = board.getMember().getId();
-		this.memberName = board.getMember().getNickname();
+	private BoardDto(Long boardId, String title, String content, String img, Long memberId, String memberName) {
+		this.boardId = boardId;
+		this.title = title;
+		this.content = content;
+		this.img = img;
+		this.memberId = memberId;
+		this.memberName = memberName;
+	}
+
+	public static BoardDto of(Long boardId, String title, String content, String img, Long memberId, String memberName){
+		return new BoardDto(boardId, title, content, img, memberId, memberName);
+	}
+
+	public static Board toEntity(BoardRequest request, Member member, String img) {
+		return Board.of(
+			request.getTitle(),
+			request.getContent(),
+			member,
+			img
+		);
 	}
 }
