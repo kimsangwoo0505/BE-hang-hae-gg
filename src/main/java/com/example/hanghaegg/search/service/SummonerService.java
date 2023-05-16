@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.example.hanghaegg.exception.CommonErrorCode;
 import com.example.hanghaegg.exception.RestApiException;
+import com.example.hanghaegg.exception.SearchErrorCode;
 import com.example.hanghaegg.search.dto.FinalResponsDto;
 import com.example.hanghaegg.search.dto.MatchResponseDto;
 import com.example.hanghaegg.search.dto.SummernerRealDto;
@@ -67,12 +68,13 @@ public class SummonerService {
 			result = objectMapper.readValue(response.body(), SummonerDTO.class);//objectMapper로 response.body()을 SummonerDTO.class로 변경
 
 
-		} catch (IOException | InterruptedException | URISyntaxException e){
-			throw new RestApiException(CommonErrorCode.IO_EXCEPTION);
-			// e.printStackTrace();
-			// return null;
+		} catch (IOException e) {
+			throw new RestApiException(SearchErrorCode.IOException_ERROR);
+		} catch (InterruptedException e) {
+			throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+		} catch (URISyntaxException e) {
+			throw new RestApiException(SearchErrorCode.URISyntaxException);
 		}
-
 
 		try {
 			HttpClient client2 = HttpClient.newHttpClient();
@@ -85,10 +87,12 @@ public class SummonerService {
 			result2 = objectMapper.readValue(response2.body(), new TypeReference<List<SummernerRealDto>>(){});
 
 
-		}catch (IOException | InterruptedException | URISyntaxException e){
-			throw new IllegalArgumentException("오류가 발생했습니다",e);
-			// e.printStackTrace();
-			// return null;
+		}catch (IOException e) {
+			throw new RestApiException(SearchErrorCode.IOException_ERROR);
+		} catch (InterruptedException e) {
+			throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+		} catch (URISyntaxException e) {
+			throw new RestApiException(SearchErrorCode.URISyntaxException);
 		}
 		SummernerRealDto result3= result2.get(0);
 
@@ -104,10 +108,12 @@ public class SummonerService {
 			matchIds = objectMapper.readValue(response3.body(), new TypeReference<List<String>>(){});
 			//////////////매치아이디 추출완료
 
-		}catch (IOException | InterruptedException | URISyntaxException e){
-			throw new IllegalArgumentException("오류가 발생했습니다",e);
-			// e.printStackTrace();
-			// return null;
+		}catch (IOException e) {
+			throw new RestApiException(SearchErrorCode.IOException_ERROR);
+		} catch (InterruptedException e) {
+			throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+		} catch (URISyntaxException e) {
+			throw new RestApiException(SearchErrorCode.URISyntaxException);
 		}
 
 
@@ -169,8 +175,12 @@ public class SummonerService {
 				// i++;
 
 
-			} catch (IOException | InterruptedException | URISyntaxException e) {
-				throw new IllegalArgumentException("오류가 발생했습니다", e);
+			} catch (IOException e) {
+				throw new RestApiException(SearchErrorCode.IOException_ERROR);
+			} catch (InterruptedException e) {
+				throw new RestApiException(SearchErrorCode.InterruptedException_ERROR);
+			} catch (URISyntaxException e) {
+				throw new RestApiException(SearchErrorCode.URISyntaxException);
 			}
 		}
 

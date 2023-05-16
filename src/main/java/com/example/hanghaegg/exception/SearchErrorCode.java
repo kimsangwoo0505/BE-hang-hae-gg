@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum SearchErrorCode implements ErrorCode {
 
-	RIOT_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "라이엇 서버에 문제가 발생했습니다"),
-	;
+	IOException_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "입출력 작업 오류가 발생했습니다"),
+	InterruptedException_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "쓰레드가 실행 중에 다른 쓰레드에 의해 중단됐습니다"),
+	URISyntaxException(HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 URI 구문을 사용했습니다");
+
 
 	private final HttpStatus httpStatus;
 	private final String message;
