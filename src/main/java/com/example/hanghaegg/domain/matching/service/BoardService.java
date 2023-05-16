@@ -43,7 +43,7 @@ public class BoardService {
 		List<BoardDto> boardDtos = new ArrayList<>();
 
 		for(Board board : boards){
-			boardDtos.add(new BoardDto(board));
+			boardDtos.add(board.toDto(board));
 		}
 
 		return boardDtos;
@@ -53,7 +53,7 @@ public class BoardService {
 	public BoardDto getBoard(final Long boardId) {
 
 		Board board = findBoardByIdOrElseThrow(boardId);
-		return new BoardDto(board);
+		return board.toDto(board);
 	}
 
 	@Transactional
@@ -67,7 +67,7 @@ public class BoardService {
 
 		}else{
 			String imagePath = saveImg(file);
-			Board board = new Board(boardRequest, member.get(), imagePath);
+			Board board = BoardDto.toEntity(boardRequest, member.get(), imagePath);
 			boardRepository.saveAndFlush(board);
 		}
 	}
@@ -82,16 +82,8 @@ public class BoardService {
 			throw new RestApiException(MemberErrorCode.INACTIVE_MEMBER);
 		}
 
-		// if (board.getFileAttached() == 1) {
-		// 	amazonS3Client.deleteObject(S3Bucket, keyName);
-		// } else {
-		// 	result = "file not found";
-		// }
 		deleteImg(board);
 		boardRepository.delete(board);
-
-
-
 	}
 
 	private String saveImg (final MultipartFile file) {
@@ -108,7 +100,6 @@ public class BoardService {
 					.withCannedAcl(CannedAccessControlList.PublicRead)
 			);
 		} catch (IOException e) {
-			// throw new RestApiException(CommonErrorCode.IO_EXCEPTION);
 			throw new RestApiException(CommonErrorCode.IO_EXCEPTION);
 		}
 
@@ -116,8 +107,6 @@ public class BoardService {
 	}
 
 	private void deleteImg(final Board board) {
-
-		//TODO: 원 코드 복구?
 
 		String[] imgId = board.getImg().split("/");
 		amazonS3Client.deleteObject(S3Bucket, imgId[imgId.length - 1]);
@@ -129,10 +118,4 @@ public class BoardService {
 			() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND)
 		);
 	}
-
-	// private void throwIfNotOwner(final Board board, final String loginUsername) {
-	//
-	// 	if (!board.getMember().getUsername().equals(loginUsername))
-	// 		throw new RestApiException(MemberErrorCode.INACTIVE_MEMBER);
-	// }
 }

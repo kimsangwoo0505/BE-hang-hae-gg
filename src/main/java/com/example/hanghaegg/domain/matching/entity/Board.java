@@ -1,8 +1,6 @@
 package com.example.hanghaegg.domain.matching.entity;
 
-import java.util.Optional;
-
-import com.example.hanghaegg.domain.matching.dto.BoardRequest;
+import com.example.hanghaegg.domain.matching.dto.BoardDto;
 import com.example.hanghaegg.domain.member.entity.Member;
 
 import jakarta.persistence.Column;
@@ -35,27 +33,29 @@ public class Board {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
-	//
-	// @Column
-	// private int fileAttached;
 
-	// @Column
-	// private String fileName;
-
+	@Column(nullable = false)
 	private String img;
 
-	public Board(BoardRequest boardRequest, Member member, String img) {
-		this.title = boardRequest.getTitle();
-		this.content = boardRequest.getContent();
+	private Board(String title, String content, Member member, String img) {
+		this.title = title;
+		this.content = content;
 		this.member = member;
-		// this.fileAttached = fileAttached;
 		this.img = img;
-		// this.fileName = fileName;
 	}
 
-	//TODO: private 생성자 추가
+	public static Board of(String title, String content, Member member, String img) {
+		return new Board(title, content, member, img);
+	}
 
-	// public static Board of(String title, String content, String img) {
-	// 	return new Board(title, content, img);
-	// }
+	public static BoardDto toDto(Board board){
+		return BoardDto.of(
+			board.getId(),
+			board.getTitle(),
+			board.getContent(),
+			board.getImg(),
+			board.getMember().getId(),
+			board.getMember().getNickname()
+		);
+	}
 }
