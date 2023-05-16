@@ -21,6 +21,9 @@ import com.example.hanghaegg.domain.matching.entity.Board;
 import com.example.hanghaegg.domain.matching.repository.BoardRepository;
 import com.example.hanghaegg.domain.member.entity.Member;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
+import com.example.hanghaegg.exception.CommonErrorCode;
+import com.example.hanghaegg.exception.MemberErrorCode;
+import com.example.hanghaegg.exception.RestApiException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,95 +42,55 @@ public class BoardService {
 		List<Board> boards = boardRepository.findAll();
 		List<BoardDto> boardDtos = new ArrayList<>();
 
-		// String imgPath;
 		for(Board board : boards){
 			boardDtos.add(new BoardDto(board));
 		}
 
 		return boardDtos;
-
-		// return boardRepository.findAll()
-		// 	.stream()
-		// 	.map(BoardListResponse::from)
-		// 	.sorted(Comparator.comparing(BoardListResponse::getCreatedAt).reversed())
-		// 	.collect(Collectors.toList());
 	}
-	//
+
 	@Transactional(readOnly = true)
 	public BoardDto getBoard(final Long boardId) {
 
 		Board board = findBoardByIdOrElseThrow(boardId);
-
 		return new BoardDto(board);
 	}
-	//
-	// @Transactional(readOnly = true)
-	// public List<BoardResponse> searchBoards(final String address) {
-	//
-	// 	return boardRepository.findByAddressJoinFetch(address)
-	// 		.stream()
-	// 		.map(BoardResponse::from)
-	// 		.sorted(Comparator.comparing(BoardResponse::getCreatedAt).reversed())
-	// 		.collect(Collectors.toList());
-	// }
 
 	@Transactional
 	public void createBoard(final BoardRequest boardRequest, final MultipartFile file, User user) {
 
 		String mail = user.getUsername();
 		Optional<Member> member = memberRepository.findByEmail(mail);
-		String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
 		if(file.isEmpty()){
-			Board board = new Board(boardRequest, member.get(), 0, null, null);
-			boardRepository.saveAndFlush(board);
+			throw new RestApiException(CommonErrorCode.INVALID_REQUEST_PARAMETER);
+
 		}else{
 			String imagePath = saveImg(file);
-			// boardDto.setMember(user);
-			// boardRequest.setImg(imagePath);
-
-			Board board = new Board(boardRequest, member.get(), 1, imagePath, fileName);
+			Board board = new Board(boardRequest, member.get(), imagePath);
 			boardRepository.saveAndFlush(board);
 		}
-
 	}
-
-	// @Transactional
-	// public void updateBoard(final Member member, final Long boardId, final BoardDto boardDto, final MultipartFile file) {
-	//
-	// 	Board board = findBoardByIdOrElseThrow(boardId);
-	//
-	// 	throwIfNotOwner(board, member.getUsername());
-	//
-	// 	if (file == null) {
-	// 		boardDto.setImg(board.getImg());
-	// 	} else {
-	// 		deleteImg(board);
-	// 		boardDto.setImg(saveImg(file));
-	// 	}
-	//
-	// 	board.updateBoard(boardDto.getTitle(), boardDto.getContent(), boardDto.getAddress(), boardDto.getImg());
-	// }
 
 	@Transactional
 	public void deleteBoard(final Long boardId, String email) {
 
 		Optional<Member> member = memberRepository.findByEmail(email);
 		Board board = findBoardByIdOrElseThrow(boardId);
-		// throwIfNotOwner(board, member.getUsername());
 
 		if(!member.get().equals(board.getMember())){
-			throw new IllegalArgumentException("다른 회원이 작성한 퀴즈입니다.");
+			throw new RestApiException(MemberErrorCode.INACTIVE_MEMBER);
 		}
-
-		deleteImg(board);
-		boardRepository.delete(board);
 
 		// if (board.getFileAttached() == 1) {
 		// 	amazonS3Client.deleteObject(S3Bucket, keyName);
 		// } else {
 		// 	result = "file not found";
 		// }
+		deleteImg(board);
+		boardRepository.delete(board);
+
+
 
 	}
 
@@ -146,7 +109,7 @@ public class BoardService {
 			);
 		} catch (IOException e) {
 			// throw new RestApiException(CommonErrorCode.IO_EXCEPTION);
-			throw new IllegalArgumentException("이미지 저장에 실패했습니다.");
+			throw new RestApiException(CommonErrorCode.IO_EXCEPTION);
 		}
 
 		return amazonS3Client.getUrl(S3Bucket, fileName).toString();
@@ -154,15 +117,16 @@ public class BoardService {
 
 	private void deleteImg(final Board board) {
 
-		// String[] imgId = board.getImg().split("/");
-		amazonS3Client.deleteObject(S3Bucket, board.getFileName());
+		//TODO: 원 코드 복구?
+
+		String[] imgId = board.getImg().split("/");
+		amazonS3Client.deleteObject(S3Bucket, imgId[imgId.length - 1]);
 	}
 
 	private Board findBoardByIdOrElseThrow(final Long boardId) {
 
 		return boardRepository.findById(boardId).orElseThrow(
-			// () -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND)
-			() -> new IllegalArgumentException("게시글을 찾을 수 없습니다.")
+			() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND)
 		);
 	}
 
