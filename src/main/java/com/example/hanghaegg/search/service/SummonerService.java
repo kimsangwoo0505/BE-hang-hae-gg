@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.hanghaegg.exception.CommonErrorCode;
+import com.example.hanghaegg.exception.RestApiException;
 import com.example.hanghaegg.search.dto.FinalResponsDto;
 import com.example.hanghaegg.search.dto.MatchResponseDto;
 import com.example.hanghaegg.search.dto.SummernerRealDto;
@@ -66,7 +68,7 @@ public class SummonerService {
 
 
 		} catch (IOException | InterruptedException | URISyntaxException e){
-			throw new IllegalArgumentException("오류가 발생했습니다",e);
+			throw new RestApiException(CommonErrorCode.IO_EXCEPTION);
 			// e.printStackTrace();
 			// return null;
 		}
