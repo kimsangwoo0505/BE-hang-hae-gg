@@ -43,6 +43,9 @@ public class SummonerService {
 		List<String> matchIds;
 		List<MatchResponseDto> matchresult = new ArrayList<>();
 		boolean didSummonerWin = false;
+		long playtime = 0;
+		Long playtimeminute;
+		Long playtimesecond;
 
 
 		String serverUrl = "https://kr.api.riotgames.com";
@@ -91,6 +94,7 @@ public class SummonerService {
 
 
 		try {
+
 			HttpClient client3 = HttpClient.newHttpClient();
 			HttpRequest request3 = HttpRequest.newBuilder()
 				.uri(new URI(matchUrl + "/lol/match/v5/matches/by-puuid/" + result.getPuuid() +"/ids?type=ranked&start=0&count=40&api_key=" + mykey))
@@ -100,10 +104,14 @@ public class SummonerService {
 			matchIds = objectMapper.readValue(response3.body(), new TypeReference<List<String>>(){});
 			//////////////매치아이디 추출완료
 
+
 		}catch (IOException |InterruptedException|URISyntaxException e) {
 			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 
+		if (matchIds.isEmpty()) {
+			throw new RestApiException(SearchErrorCode.NO_RANKED_GAMES);
+		}
 
 		int start = Math.max(0, (page - 1) * size);
 		int end = Math.min(matchIds.size(), start + size);
@@ -151,14 +159,19 @@ public class SummonerService {
 				for (JsonNode team : matchDetail.get("info").get("teams")) {
 					if (team.get("teamId").asInt() == teamId) {
 						didSummonerWin = team.get("win").asBoolean();
+						playtime = matchDetail.get("info").get("gameDuration").asLong();
 						break;
 					}
 				}
 
+				playtimeminute=playtime/60;
+				playtimesecond=playtime%60;
+
+
 
 				String champonImg="https://ddragon.leagueoflegends.com/cdn/13.9.1/img/champion/"+championName+".png";
 
-				MatchResponseDto matchResponseDto0=new MatchResponseDto("랭크게임",didSummonerWin,championName,champonImg,kills,deaths,assists);
+				MatchResponseDto matchResponseDto0=new MatchResponseDto("랭크게임",didSummonerWin,championName,champonImg,kills,deaths,assists,playtimeminute,playtimesecond);
 				matchresult.add(matchResponseDto0);
 				// i++;
 
