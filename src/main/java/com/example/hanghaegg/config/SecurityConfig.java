@@ -154,6 +154,7 @@ public class SecurityConfig {
 		config.addAllowedOrigin("http://localhost:3000");
 		config.addAllowedOrigin("http://hhgg.s3-website.ap-northeast-2.amazonaws.com");
 		config.addAllowedOrigin("https://hhaegg.com");
+		config.addAllowedOrigin("https://www.hhaegg.o-r.kr");
 		config.addExposedHeader("Authorization");
 		config.addExposedHeader("Authorization-refresh");
 
