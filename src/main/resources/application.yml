@@ -5,6 +5,7 @@ spring:
         - common
         - oauth
         - jwt
+        - server.port=8081
       dev:
         - common
         - oauth
