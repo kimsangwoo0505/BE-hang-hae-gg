@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public class BoardDto {
 
+	private long boardId;
+
 	private String title;
 
 	private String content;
@@ -16,6 +18,7 @@ public class BoardDto {
 	private Long memberId;
 
 	public BoardDto(Board board){
+		this.boardId = board.getId();
 		this.title = board.getTitle();
 		this.content = board.getContent();
 		this.img = board.getImg();
