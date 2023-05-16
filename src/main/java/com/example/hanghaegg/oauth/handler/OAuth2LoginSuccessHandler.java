@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import com.example.hanghaegg.domain.member.constant.MemberRole;
-import com.example.hanghaegg.domain.member.entity.Member;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
 import com.example.hanghaegg.security.jwt.JwtService;
 import com.example.hanghaegg.oauth.dto.CustomOAuth2User;
@@ -50,7 +48,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 			// 	log.info("이메일에 해당하는 유저를 db에서 찾았습니다!" + findUser.getRole());
 			// } else {
 			loginSuccess(response, oAuth2User); // 로그인에 성공한 경우 access, refresh 토큰 생성
-			response.sendRedirect("https://hhaegg.com");
 			// }
 		} catch (Exception e) {
 			throw e;

@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -12,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
@@ -99,6 +96,15 @@ public class JwtService {
 		setAccessTokenHeader(response, accessToken);
 		setRefreshTokenHeader(response, refreshToken);
 		log.info("Access Token, Refresh Token 헤더 설정 완료");
+
+		try {
+			String redirectUrl = "https://hhaegg.com?" + accessHeader + "=" +
+				URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
+				"&" + refreshHeader + "=" + URLEncoder.encode("Bearer " + refreshToken, "UTF-8");
+			response.sendRedirect(redirectUrl);
+		} catch (Exception e) {
+			log.info("리다이렉트 URL이 유효하지 않습니다.");
+		}
 	}
 
 	/**
@@ -150,14 +156,14 @@ public class JwtService {
 	public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
 		String bearerAccessToken = "Bearer " + accessToken;
 		response.setHeader(accessHeader, bearerAccessToken);
-		try {
-			ResponseCookie cookie = ResponseCookie
-				.from(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20"))
-				.path("/").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
-			response.addHeader("Set-Cookie", cookie.toString());
-		} catch (UnsupportedEncodingException e) {
-			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
-		}
+		// try {
+		// 	ResponseCookie cookie = ResponseCookie
+		// 		.from(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20"))
+		// 		.path("/").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
+		// 	response.addHeader("Set-Cookie", cookie.toString());
+		// } catch (UnsupportedEncodingException e) {
+		// 	log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
+		// }
 	}
 
 	/**
@@ -166,14 +172,14 @@ public class JwtService {
 	public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
 		String bearerRefreshToken = "Bearer " + refreshToken;
 		response.setHeader(refreshHeader, bearerRefreshToken);
-		try {
-			ResponseCookie cookie = ResponseCookie
-				.from(refreshHeader, URLEncoder.encode(bearerRefreshToken, "utf-8").replaceAll("\\+", "%20"))
-				.path("/").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
-			response.addHeader("Set-Cookie", cookie.toString());
-		} catch (UnsupportedEncodingException e) {
-			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
-		}
+		// try {
+		// 	ResponseCookie cookie = ResponseCookie
+		// 		.from(refreshHeader, URLEncoder.encode(bearerRefreshToken, "utf-8").replaceAll("\\+", "%20"))
+		// 		.path("/").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
+		// 	response.addHeader("Set-Cookie", cookie.toString());
+		// } catch (UnsupportedEncodingException e) {
+		// 	log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
+		// }
 	}
 
 	/**
