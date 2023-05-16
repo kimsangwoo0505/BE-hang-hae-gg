@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
 import com.example.hanghaegg.security.jwt.JwtService;
@@ -65,5 +66,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 		jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
+
+		String redirectUrl = "https://hhaegg.com?" + "Authorization" + "=" +
+			URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
+			"&" + "Authorization-refresh" + "=" + URLEncoder.encode("Bearer " + refreshToken, "UTF-8");
+		response.sendRedirect(redirectUrl);
 	}
 }

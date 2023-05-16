@@ -96,15 +96,6 @@ public class JwtService {
 		setAccessTokenHeader(response, accessToken);
 		setRefreshTokenHeader(response, refreshToken);
 		log.info("Access Token, Refresh Token 헤더 설정 완료");
-
-		try {
-			String redirectUrl = "https://hhaegg.com?" + accessHeader + "=" +
-				URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
-				"&" + refreshHeader + "=" + URLEncoder.encode("Bearer " + refreshToken, "UTF-8");
-			response.sendRedirect(redirectUrl);
-		} catch (Exception e) {
-			log.info("리다이렉트 URL이 유효하지 않습니다.");
-		}
 	}
 
 	/**
