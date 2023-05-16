@@ -16,4 +16,6 @@ public class MatchResponseDto {
 	private int kills;
 	private int	deaths;
 	private	int assists;
+	private Long playtimeminute;
+	private Long playtimesecond;
 }
