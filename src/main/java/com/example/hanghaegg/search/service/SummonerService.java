@@ -68,11 +68,7 @@ public class SummonerService {
 			result = objectMapper.readValue(response.body(), SummonerDTO.class);//objectMapper로 response.body()을 SummonerDTO.class로 변경
 
 
-		} catch (IOException e) {
-			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-		} catch (InterruptedException e) {
-			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-		} catch (URISyntaxException e) {
+		} catch (IOException |InterruptedException|URISyntaxException e) {
 			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 
@@ -87,11 +83,7 @@ public class SummonerService {
 			result2 = objectMapper.readValue(response2.body(), new TypeReference<List<SummernerRealDto>>(){});
 
 
-		}catch (IOException e) {
-			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-		} catch (InterruptedException e) {
-			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-		} catch (URISyntaxException e) {
+		}catch (IOException |InterruptedException|URISyntaxException e) {
 			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 		SummernerRealDto result3= result2.get(0);
@@ -108,11 +100,7 @@ public class SummonerService {
 			matchIds = objectMapper.readValue(response3.body(), new TypeReference<List<String>>(){});
 			//////////////매치아이디 추출완료
 
-		}catch (IOException e) {
-			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-		} catch (InterruptedException e) {
-			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-		} catch (URISyntaxException e) {
+		}catch (IOException |InterruptedException|URISyntaxException e) {
 			throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 		}
 
@@ -175,11 +163,7 @@ public class SummonerService {
 				// i++;
 
 
-			} catch (IOException e) {
-				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-			} catch (InterruptedException e) {
-				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
-			} catch (URISyntaxException e) {
+			} catch (IOException |InterruptedException|URISyntaxException e) {
 				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 			}
 		}
