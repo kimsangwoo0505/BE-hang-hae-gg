@@ -17,11 +17,14 @@ public class BoardDto {
 
 	private Long memberId;
 
+	private String memberName;
+
 	public BoardDto(Board board){
 		this.boardId = board.getId();
 		this.title = board.getTitle();
 		this.content = board.getContent();
 		this.img = board.getImg();
 		this.memberId = board.getMember().getId();
+		this.memberName = board.getMember().getNickname();
 	}
 }
