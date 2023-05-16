@@ -153,7 +153,7 @@ public class JwtService {
 		try {
 			ResponseCookie cookie = ResponseCookie
 				.from(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20"))
-				.path("http://localhost:3000").sameSite("None").httpOnly(true).maxAge(3600000).secure(true).build();
+				.path("https://hhaegg.com").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
 			response.addHeader("Set-Cookie", cookie.toString());
 		} catch (UnsupportedEncodingException e) {
 			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
@@ -167,8 +167,10 @@ public class JwtService {
 		String bearerRefreshToken = "Bearer " + refreshToken;
 		response.setHeader(refreshHeader, bearerRefreshToken);
 		try {
-			response.addCookie(
-				new Cookie(refreshHeader, URLEncoder.encode(bearerRefreshToken, "utf-8").replaceAll("\\+", "%20")));
+			ResponseCookie cookie = ResponseCookie
+				.from(refreshHeader, URLEncoder.encode(bearerRefreshToken, "utf-8").replaceAll("\\+", "%20"))
+				.path("https://hhaegg.com").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
+			response.addHeader("Set-Cookie", cookie.toString());
 		} catch (UnsupportedEncodingException e) {
 			log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
 		}
