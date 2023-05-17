@@ -39,7 +39,7 @@ public class BoardService {
 	@Transactional(readOnly = true)
 	public List<BoardDto> getAllBoards() {
 
-		List<Board> boards = boardRepository.findAll();
+		List<Board> boards = boardRepository.findAllWithMember();
 		List<BoardDto> boardDtos = new ArrayList<>();
 
 		for(Board board : boards){
