@@ -39,11 +39,11 @@ public class BoardService {
 	@Transactional(readOnly = true)
 	public List<BoardDto> getAllBoards() {
 
-		List<Board> boards = boardRepository.findAll();
+		List<Board> boards = boardRepository.findAllWithMember();
 		List<BoardDto> boardDtos = new ArrayList<>();
 
 		for(Board board : boards){
-			boardDtos.add(board.toDto(board));
+			boardDtos.add(new BoardDto(board));
 		}
 
 		return boardDtos;
@@ -53,7 +53,7 @@ public class BoardService {
 	public BoardDto getBoard(final Long boardId) {
 
 		Board board = findBoardByIdOrElseThrow(boardId);
-		return board.toDto(board);
+		return new BoardDto(board);
 	}
 
 	@Transactional
