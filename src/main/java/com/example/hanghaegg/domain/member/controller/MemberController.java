@@ -12,6 +12,7 @@ import com.example.hanghaegg.exception.MemberErrorCode;
 import com.example.hanghaegg.exception.PasswordValidator;
 import com.example.hanghaegg.exception.RestApiException;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,18 +23,12 @@ public class MemberController {
 	private final PasswordValidator passwordValidator = new PasswordValidator();
 	private final EmailValidator emailValidator=new EmailValidator();
 	@PostMapping("/signup")
-	public String signUp(@RequestBody MemberSignUpDto memberSignUpDto) throws Exception {
+	public String signUp(@Valid @RequestBody MemberSignUpDto memberSignUpDto) throws Exception {
 		memberService.signUp(memberSignUpDto);
 
 		String email = memberSignUpDto.getEmail();
 		String password = memberSignUpDto.getPassword();
 
-		if (!emailValidator.isValid(email, null)) {
-			throw new RestApiException(MemberErrorCode.EMAIL_ERROR1);
-		}
-		if (!passwordValidator.isValid(password, null)) {
-			throw new RestApiException(MemberErrorCode.PASSWORD_ERROR1);
-		}
 
 		return "회원가입 성공";
 	}
