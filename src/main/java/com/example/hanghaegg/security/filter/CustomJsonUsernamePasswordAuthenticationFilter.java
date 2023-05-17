@@ -1,5 +1,10 @@
 package com.example.hanghaegg.security.filter;
 
+import com.example.hanghaegg.exception.EmailValidator;
+import com.example.hanghaegg.exception.MemberErrorCode;
+import com.example.hanghaegg.exception.PasswordValidator;
+import com.example.hanghaegg.exception.RestApiException;
+import com.example.hanghaegg.exception.SearchErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,6 +62,10 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
 	 * authenticate()의 파라미터로 UsernamePasswordAuthenticationToken 객체를 넣고 인증 처리
 	 * (여기서 AuthenticationManager 객체는 ProviderManager -> SecurityConfig에서 설정)
 	 */
+
+	private final PasswordValidator passwordValidator = new PasswordValidator();
+	private final EmailValidator emailValidator=new EmailValidator();
+
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
 		if(request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)  ) {
@@ -69,6 +78,18 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
 
 		String email = usernamePasswordMap.get(USERNAME_KEY);
 		String password = usernamePasswordMap.get(PASSWORD_KEY);
+
+
+		if (!emailValidator.isValid(email, null)) {
+			throw new RestApiException(MemberErrorCode.EMAIL_ERROR1);
+		}
+
+		if (!passwordValidator.isValid(password, null)) {
+			throw new RestApiException(MemberErrorCode.PASSWORD_ERROR1);
+		}
+
+
+
 
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);//principal 과 credentials 전달
 

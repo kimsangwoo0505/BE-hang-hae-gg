@@ -1,4 +1,4 @@
-package com.example.hanghaegg.search.dto;
+package com.example.hanghaegg.domain.search.dto;
 
 import lombok.Data;
 
