@@ -1,14 +1,12 @@
-package com.example.hanghaegg.search.controller;
+package com.example.hanghaegg.domain.search.controller;
 
-import com.example.hanghaegg.search.dto.FinalResponsDto;
-import com.example.hanghaegg.search.service.SummonerService;
+import com.example.hanghaegg.domain.search.dto.FinalResponsDto;
+import com.example.hanghaegg.domain.search.service.SummonerService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

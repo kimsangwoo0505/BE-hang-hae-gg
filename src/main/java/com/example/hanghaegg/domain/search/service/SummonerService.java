@@ -1,4 +1,4 @@
-package com.example.hanghaegg.search.service;
+package com.example.hanghaegg.domain.search.service;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,19 +8,16 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.hanghaegg.exception.CommonErrorCode;
+import com.example.hanghaegg.domain.search.dto.FinalResponsDto;
+import com.example.hanghaegg.domain.search.dto.InfoResponseDto;
+import com.example.hanghaegg.domain.search.dto.SummernerRealDto;
+import com.example.hanghaegg.domain.search.dto.SummonerDTO;
 import com.example.hanghaegg.exception.RestApiException;
 import com.example.hanghaegg.exception.SearchErrorCode;
-import com.example.hanghaegg.search.dto.FinalResponsDto;
-import com.example.hanghaegg.search.dto.MatchResponseDto;
-import com.example.hanghaegg.search.dto.SummernerRealDto;
-import com.example.hanghaegg.search.dto.SummonerDTO;
-import com.example.hanghaegg.search.dto.InfoResponseDto;
+import com.example.hanghaegg.domain.search.dto.MatchResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Value;
