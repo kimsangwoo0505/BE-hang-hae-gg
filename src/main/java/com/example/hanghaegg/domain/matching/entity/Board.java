@@ -30,7 +30,7 @@ public class Board {
 	@Column(nullable = false)
 	private String content;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 
