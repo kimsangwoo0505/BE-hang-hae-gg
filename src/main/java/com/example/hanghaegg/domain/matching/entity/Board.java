@@ -47,15 +47,4 @@ public class Board {
 	public static Board of(String title, String content, Member member, String img) {
 		return new Board(title, content, member, img);
 	}
-
-	public static BoardDto toDto(Board board){
-		return BoardDto.of(
-			board.getId(),
-			board.getTitle(),
-			board.getContent(),
-			board.getImg(),
-			board.getMember().getId(),
-			board.getMember().getNickname()
-		);
-	}
 }
