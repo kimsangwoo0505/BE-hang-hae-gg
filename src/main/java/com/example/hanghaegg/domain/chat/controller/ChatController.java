@@ -24,6 +24,7 @@ public class ChatController {
 	public void getChat(
 		HttpServletRequest request,
 		@RequestParam Long boardId,
+		@RequestParam("boardId") Long boardId,
 		@AuthenticationPrincipal User user) {
 
 		Board board = boardRepository.findById(boardId).orElseThrow(
