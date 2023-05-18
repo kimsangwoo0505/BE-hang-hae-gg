@@ -8,6 +8,8 @@ import com.example.hanghaegg.domain.member.constant.MemberRole;
 import com.example.hanghaegg.domain.member.dto.MemberSignUpDto;
 import com.example.hanghaegg.domain.member.entity.Member;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
+import com.example.hanghaegg.exception.MemberErrorCode;
+import com.example.hanghaegg.exception.RestApiException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,11 +24,7 @@ public class MemberService {
 	public void signUp(MemberSignUpDto memberSignUpDto) throws Exception {
 
 		if (memberRepository.findByEmail(memberSignUpDto.getEmail()).isPresent()) {
-			throw new Exception("이미 존재하는 이메일입니다.");
-		}
-
-		if (memberRepository.findByNickname(memberSignUpDto.getNickname()).isPresent()) {
-			throw new Exception("이미 존재하는 닉네임입니다.");
+			throw new RestApiException(MemberErrorCode.DUPLICATED_EMAIL);
 		}
 
 		Member member = Member.builder()

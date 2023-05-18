@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.hanghaegg.domain.member.entity.Member;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
+import com.example.hanghaegg.exception.MemberErrorCode;
+import com.example.hanghaegg.exception.RestApiException;
 
 @Slf4j
 @Service
@@ -21,7 +23,7 @@ public class LoginService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다."));
+			.orElseThrow(() -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
 
 		log.info("일반 로그인 서비스 로직입니다.");
 		return org.springframework.security.core.userdetails.User.builder()
