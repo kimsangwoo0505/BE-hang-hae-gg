@@ -1,8 +1,11 @@
-package com.example.hanghaegg.security.jwt;
+package com.example.hanghaegg.security.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
+import com.example.hanghaegg.exception.MemberErrorCode;
+import com.example.hanghaegg.exception.RestApiException;
+import com.example.hanghaegg.exception.TokenErrorCode;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -137,7 +140,8 @@ public class JwtService {
 				.asString());
 		} catch (Exception e) {
 			log.error("액세스 토큰이 유효하지 않습니다.");
-			return Optional.empty();
+			throw new RestApiException(TokenErrorCode.INVALID_TOKEN);
+			// return Optional.empty();
 		}
 	}
 
@@ -177,11 +181,15 @@ public class JwtService {
 	 * RefreshToken DB 저장(업데이트)
 	 */
 	public void updateRefreshToken(String email, String refreshToken) {
-		memberRepository.findByEmail(email)
-			.ifPresentOrElse(
-				user -> user.updateRefreshToken(refreshToken),
-				() -> new Exception("일치하는 회원이 없습니다.")
-			);
+		try {
+			memberRepository.findByEmail(email)
+				.ifPresentOrElse(
+					user -> user.updateRefreshToken(refreshToken),
+					() -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND)
+				);
+		} catch (Exception e) {
+			log.error("해당 멤버를 찾을 수 없어 리프레시 토큰을 업데이트 할 수 없습니다. {}", e.getMessage());
+		}
 	}
 
 	public boolean isTokenValid(String token) {
@@ -189,7 +197,7 @@ public class JwtService {
 			JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
 			return true;
 		} catch (Exception e) {
-			log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+			log.info("유효하지 않은 토큰입니다. {}", e.getMessage());
 			return false;
 		}
 	}
