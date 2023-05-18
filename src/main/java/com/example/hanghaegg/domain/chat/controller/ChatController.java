@@ -23,7 +23,6 @@ public class ChatController {
 	@GetMapping("/chat")
 	public void getChat(
 		HttpServletRequest request,
-		@RequestParam Long boardId,
 		@RequestParam("boardId") Long boardId,
 		@AuthenticationPrincipal User user) {
 
