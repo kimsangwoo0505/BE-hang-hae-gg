@@ -129,17 +129,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		log.info("checkAccessTokenAndAuthentication() 호출");
 
-		Optional<String> accessToken = jwtService.extractAccessToken(request);
-		if (accessToken.isPresent()) {
-			if (jwtService.isTokenValid(accessToken.get())) {
-				Optional<String> email = jwtService.extractEmail(accessToken.get());
-				if (email.isPresent()) {
-					Optional<Member> member = memberRepository.findByEmail(email.get());
-					member.ifPresent(this::saveAuthentication);
-					filterChain.doFilter(request, response);
-				}
-			}
-		}
+		jwtService.extractAccessToken(request)
+			.filter(jwtService::isTokenValid)
+			.ifPresent(accessToken -> jwtService.extractEmail(accessToken)
+				.ifPresent(email -> memberRepository.findByEmail(email)
+					.ifPresent(this::saveAuthentication)));
+
+		filterChain.doFilter(request, response);
 		// jwtResponseHandler(response, TokenErrorCode.INVALID_TOKEN);
 	}
 
