@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
 	//ConstraintValidator 인터페이스는 Bean Validation API의 일부로, 개발자가 커스텀 제약 조건을 정의할 수 있게 해주는 인터페이스
-	private static final String PASSWORD_PATTERN = "^[^\\s]{4,8}$";
+	private static final String PASSWORD_PATTERN = "^[^\\s]{4,12}$";
 	private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
 
 
