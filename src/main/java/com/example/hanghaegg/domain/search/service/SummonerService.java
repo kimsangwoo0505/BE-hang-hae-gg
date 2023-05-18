@@ -61,8 +61,10 @@ public class SummonerService {
 			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 			//request를 보내고 HttpResponse.BodyHandlers.ofString()로 BodyHandler를 생성(.ofString()으로 응답 본문(body)을 문자열(String)로 변환하여 처리)
 
-			if(response.statusCode() != 200) {
-				return null;
+			if(summonerName == null || summonerName.isEmpty()){
+				throw new RestApiException(SearchErrorCode.NONEXISTENT);
+			}else if(response.statusCode() != 200) {
+				throw new RestApiException(SearchErrorCode.RIOT_ERROR);
 			}
 
 			result = objectMapper.readValue(response.body(), SummonerDTO.class);//objectMapper로 response.body()을 SummonerDTO.class로 변경
