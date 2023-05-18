@@ -50,12 +50,12 @@ public class SummonerService {
 		String encodedSummonerName;
 
 		try {
-			encodedSummonerName = URLEncoder.encode(summonerName, StandardCharsets.UTF_8.toString());//띄어쓰기 코딩(HTTP 요청을 보낼때 소환사 이름을 URL에 안전하게 포함시키는 용도)
+			encodedSummonerName = URLEncoder.encode(summonerName, StandardCharsets.UTF_8.toString());
 
-			HttpClient client = HttpClient.newHttpClient();//새로운 HttpClient 객체를 생성(HTTP 요청을 보내고 응답을 받는데 사용)
-			HttpRequest request = HttpRequest.newBuilder()//HttpRequest는 요청 메서드(GET, POST, PUT, DELETE 등), URI, 헤더, 본문 등의 정보를 가지고 있으며,HttpClient의 send() 또는 sendAsync() 메서드에 전달하여 HTTP 요청을 보낼 수 있음
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
 				.uri(new URI(serverUrl + "/lol/summoner/v4/summoners/by-name/" + encodedSummonerName + "?api_key=" + mykey))
-				.build();//HttpRequest 객체를 생성하는 코드
+				.build();
 
 
 			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -137,9 +137,7 @@ public class SummonerService {
 
 				// 검색한 소환사를 찾았다면 그의 팀 ID를 저장
 				for (JsonNode participant : participants) {
-					String participantName = participant.get("summonerName").asText().replaceAll("\\s+", "").toLowerCase();//URL부분이 아니라 이미수신한 JSON응답에서 특정 소환사를 찾는 작업을 수행하는 것이므로 다르게 인코딩 해야함
-					//asText()로 String으로 바꾸고->.replaceAll("\\s+", "")을 통해서 믄자열 내의 모든 공백(띄어쓰기, 탭, 줄바꿈 등)을 제거->toLowerCase()모두 소문자로 변경
-					//("\\s+"는 공백문자가 하나이상 연속으로 나타나는패턴을 말하며,.replaceAll("\\s+", "")은 공백문자가 하나이상 연속으로 나타나면 ""인 빈문자열로 대체하게함
+					String participantName = participant.get("summonerName").asText().replaceAll("\\s+", "").toLowerCase();
 					String rawName = summonerName.replaceAll("\\s+", "").toLowerCase();
 					if (participantName.equals(rawName)) {
 						teamId = participant.get("teamId").asInt();

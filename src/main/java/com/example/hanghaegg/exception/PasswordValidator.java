@@ -15,7 +15,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		boolean isValid = true;
-		context.disableDefaultConstraintViolation();//기본 제약 위반을 비활성화
+		context.disableDefaultConstraintViolation();
 
 		if (value == null || !value.matches(PASSWORD_PATTERN)) {
 			context.buildConstraintViolationWithTemplate("비밀번호는 4자 이상 8자 이하로 작성해주세요.")
