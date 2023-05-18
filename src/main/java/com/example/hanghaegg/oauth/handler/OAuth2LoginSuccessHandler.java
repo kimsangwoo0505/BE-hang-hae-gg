@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
-import com.example.hanghaegg.security.jwt.JwtService;
+import com.example.hanghaegg.security.service.JwtService;
 import com.example.hanghaegg.oauth.dto.CustomOAuth2User;
 
 @Slf4j
