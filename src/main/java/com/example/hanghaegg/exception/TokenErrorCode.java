@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TokenErrorCode implements ErrorCode {
 
-	INVALID_ACCESS_TOKEN (HttpStatus.BAD_REQUEST, "유효하지 않는 Access token 입니다"),
+	INVALID_TOKEN (HttpStatus.BAD_REQUEST, "유효하지 않는 Token 입니다"),
+	ISSUED_ACCESS_TOKEN (HttpStatus.OK, "엑세스 토큰이 발급되었습니다"),
 	;
 
 	private final HttpStatus httpStatus;
