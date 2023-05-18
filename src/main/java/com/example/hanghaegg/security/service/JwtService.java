@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -140,8 +139,8 @@ public class JwtService {
 				.asString());
 		} catch (Exception e) {
 			log.error("액세스 토큰이 유효하지 않습니다.");
-			throw new RestApiException(TokenErrorCode.INVALID_TOKEN);
-			// return Optional.empty();
+			// throw new RestApiException(TokenErrorCode.INVALID_TOKEN);
+			return Optional.empty();
 		}
 	}
 
@@ -151,14 +150,6 @@ public class JwtService {
 	public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
 		String bearerAccessToken = "Bearer " + accessToken;
 		response.setHeader(accessHeader, bearerAccessToken);
-		// try {
-		// 	ResponseCookie cookie = ResponseCookie
-		// 		.from(accessHeader, URLEncoder.encode(bearerAccessToken, "utf-8").replaceAll("\\+", "%20"))
-		// 		.path("/").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
-		// 	response.addHeader("Set-Cookie", cookie.toString());
-		// } catch (UnsupportedEncodingException e) {
-		// 	log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
-		// }
 	}
 
 	/**
@@ -167,14 +158,6 @@ public class JwtService {
 	public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
 		String bearerRefreshToken = "Bearer " + refreshToken;
 		response.setHeader(refreshHeader, bearerRefreshToken);
-		// try {
-		// 	ResponseCookie cookie = ResponseCookie
-		// 		.from(refreshHeader, URLEncoder.encode(bearerRefreshToken, "utf-8").replaceAll("\\+", "%20"))
-		// 		.path("/").sameSite("None").httpOnly(false).maxAge(3600000).secure(true).build();
-		// 	response.addHeader("Set-Cookie", cookie.toString());
-		// } catch (UnsupportedEncodingException e) {
-		// 	log.info("cookie를 추가하는 과정에서 에러가 발생했습니다.");
-		// }
 	}
 
 	/**
