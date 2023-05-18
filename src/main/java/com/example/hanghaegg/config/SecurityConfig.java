@@ -6,7 +6,7 @@ import com.example.hanghaegg.security.filter.CustomJsonUsernamePasswordAuthentic
 import com.example.hanghaegg.security.filter.JwtAuthenticationProcessingFilter;
 import com.example.hanghaegg.security.handler.LoginFailureHandler;
 import com.example.hanghaegg.security.handler.LoginSuccessHandler;
-import com.example.hanghaegg.security.jwt.JwtService;
+import com.example.hanghaegg.security.service.JwtService;
 import com.example.hanghaegg.oauth.service.CustomOAuth2UserService;
 import com.example.hanghaegg.oauth.handler.OAuth2LoginFailureHandler;
 import com.example.hanghaegg.oauth.handler.OAuth2LoginSuccessHandler;

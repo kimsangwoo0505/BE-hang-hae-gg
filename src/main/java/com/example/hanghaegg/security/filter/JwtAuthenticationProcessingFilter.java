@@ -15,11 +15,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.example.hanghaegg.domain.member.entity.Member;
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
-import com.example.hanghaegg.security.jwt.JwtService;
+import com.example.hanghaegg.exception.ErrorCode;
+import com.example.hanghaegg.exception.ErrorResponse;
+import com.example.hanghaegg.exception.TokenErrorCode;
+import com.example.hanghaegg.security.service.JwtService;
 import com.example.hanghaegg.security.util.PasswordUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Jwt 인증 필터
@@ -60,6 +65,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		// -> RefreshToken이 없거나 유효하지 않다면(DB에 저장된 RefreshToken과 다르다면) null을 반환
 		// 사용자의 요청 헤더에 RefreshToken이 있는 경우는, AccessToken이 만료되어 요청한 경우밖에 없다.
 		// 따라서, 위의 경우를 제외하면 추출한 refreshToken은 모두 null
+		// 내 한 줄 정리: 유효한 refresh token이 아니라면 null로 만들기
+		log.info("리프레시 토큰 유효성 검사");
 		String refreshToken = jwtService.extractRefreshToken(request)
 			.filter(jwtService::isTokenValid)
 			.orElse(null);
@@ -69,12 +76,14 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		// 일치한다면 AccessToken을 재발급해준다.
 		if (refreshToken != null) {
 			checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+			jwtResponseHandler(response, TokenErrorCode.ISSUED_ACCESS_TOKEN);
 			return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
 		}
 
 		// RefreshToken이 없거나 유효하지 않다면, AccessToken을 검사하고 인증을 처리하는 로직 수행
 		// AccessToken이 없거나 유효하지 않다면, 인증 객체가 담기지 않은 상태로 다음 필터로 넘어가기 때문에 403 에러 발생
 		// AccessToken이 유효하다면, 인증 객체가 담긴 상태로 다음 필터로 넘어가기 때문에 인증 성공
+		log.info("액세스 토큰 유효성 검사");
 		if (refreshToken == null) {
 			checkAccessTokenAndAuthentication(request, response, filterChain);
 		}
@@ -119,13 +128,19 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		log.info("checkAccessTokenAndAuthentication() 호출");
-		jwtService.extractAccessToken(request)
-			.filter(jwtService::isTokenValid)
-			.ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-				.ifPresent(email -> memberRepository.findByEmail(email)
-					.ifPresent(this::saveAuthentication)));
 
-		filterChain.doFilter(request, response);
+		Optional<String> accessToken = jwtService.extractAccessToken(request);
+		if (accessToken.isPresent()) {
+			if (jwtService.isTokenValid(accessToken.get())) {
+				Optional<String> email = jwtService.extractEmail(accessToken.get());
+				if (email.isPresent()) {
+					Optional<Member> member = memberRepository.findByEmail(email.get());
+					member.ifPresent(this::saveAuthentication);
+					filterChain.doFilter(request, response);
+				}
+			}
+		}
+		jwtResponseHandler(response, TokenErrorCode.INVALID_TOKEN);
 	}
 
 	/**
@@ -160,5 +175,22 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 				authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+
+	public void jwtResponseHandler(HttpServletResponse response, ErrorCode errorCode) {
+		log.error("jwtResponseHandler 에러/응답을 처리.");
+
+		response.setStatus(errorCode.getHttpStatus().value());
+		response.setContentType("application/json");
+		try {
+			String json = new ObjectMapper()
+				.writeValueAsString(new ErrorResponse(
+					errorCode.name(),
+					errorCode.getHttpStatus().toString(),
+					errorCode.getMessage()));
+			response.getWriter().write(json);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
 	}
 }

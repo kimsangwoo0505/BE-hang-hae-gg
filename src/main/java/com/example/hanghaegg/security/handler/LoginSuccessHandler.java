@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import com.example.hanghaegg.domain.member.repository.MemberRepository;
-import com.example.hanghaegg.security.jwt.JwtService;
+import com.example.hanghaegg.security.service.JwtService;
 
 @Slf4j
 @RequiredArgsConstructor
