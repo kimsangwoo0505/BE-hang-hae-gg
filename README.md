@@ -1,5 +1,6 @@
 # BE-hang-hae-gg(리그오브레전드 전적 검색 사이트(op.gg) 클론코딩)
-ㅇㅇㅇ
+인기 게임 리그 오브레전드의 전적 검색사이트 op.gg클론 코딩 프로젝트
+- 라이엇 오픈 api,s3이용 이미지 업로드,웹소켓 채팅,소셜로그인 등 기능 구현
 
 # 메인페이지
 ![image](https://github.com/kimsangwoo0505/BE-hang-hae-gg/assets/128295141/13cb38be-8d7b-4b28-8c7c-6dadccbe9ae1)
