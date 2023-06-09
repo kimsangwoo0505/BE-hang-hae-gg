@@ -2,6 +2,9 @@
 - 인기 게임 리그 오브레전드의 전적 검색사이트 op.gg클론 코딩 프로젝트
 - 라이엇 오픈 api,s3이용 이미지 업로드,웹소켓 채팅,소셜로그인 등 기능 구현
 
+# api명세서 및 프로젝트 내용 등을 볼수 있는 노션 페이지
+https://www.notion.so/S-A-23-05-12-18-c20d900111944d09bc381c1b834ccc4d?pvs=4
+
 # 메인페이지
 ![image](https://github.com/kimsangwoo0505/BE-hang-hae-gg/assets/128295141/13cb38be-8d7b-4b28-8c7c-6dadccbe9ae1)
 # 회원가입/로그인(소셜로그인 포함)
